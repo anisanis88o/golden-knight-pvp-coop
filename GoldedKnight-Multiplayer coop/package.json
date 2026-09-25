@@ -1,0 +1,23 @@
+{
+  "name": "gilded-knight-vs-violet-sentinel",
+  "productName": "Gilded Knight",
+  "version": "1.0.0",
+  "description": "Boss duel: The Gilded Knight vs The Violet Sentinel",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-win": "electron-builder --win portable",
+    "build-mac": "electron-builder --mac dmg",
+    "build-linux": "electron-builder --linux AppImage"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.example.gildedknight",
+    "productName": "Gilded Knight",
+    "files": ["main.js", "game/**/*"],
+    "directories": { "output": "dist" }
+  }
+}

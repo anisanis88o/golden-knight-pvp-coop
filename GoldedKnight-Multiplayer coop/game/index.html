@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Gilded Knight vs The Violet Sentinel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="c"></canvas>
+
+    <div id="title" class="ov">
+      <img id="tHero" class="portrait" alt="The Gilded Knight, bronze armor with a round rune shield and greatsword">
+      <div class="mid">
+        <h1>The Gilded Knight</h1>
+        <p class="lead">Pick a duel. Break combos with a well-timed parry, block to take 25% less damage, and dodge on the ground or in the air.</p>
+        <div class="keys" id="titleKeys"></div>
+        <button id="openSettings" class="go alt small">CONTROLS &amp; MUSIC</button>
+        <button id="openMp" class="go alt small">PVP DUEL &mdash; PLAY ONLINE</button>
+        <button id="openCo" class="go alt small">CO-OP &mdash; FIGHT BOSSES TOGETHER</button>
+        <div class="hint">Enter starts the last boss. 1 / 2 pick a boss. F fullscreen. M mutes. Esc pauses. Click anywhere to start the music.</div>
+      </div>
+      <div class="cards">
+        <div class="pick">CHOOSE YOUR OPPONENT</div>
+        <button id="pickSent" class="card sent">
+          <div id="cSent" class="pic"></div>
+          <div class="cn">1. The Violet Sentinel</div>
+          <div class="cs">Health 4000. Parry his combos, jump the violet beam, escape the blast.</div>
+        </button>
+        <button id="pickArt" class="card art">
+          <div id="cArt" class="pic art"></div>
+          <div class="cn">2. Artorias the Abysswalker</div>
+          <div class="cs">Health 20000. One-armed knight with leaping claw slams, sword rushes and an abyss blast. Enraged at half health.</div>
+        </button>
+      </div>
+    </div>
+
+    <div id="end" class="ov hide">
+      <h2 id="endTitle"></h2>
+      <p id="endSub"></p>
+      <div class="btns"><button id="endBtn" class="go">Try again</button><button id="menuBtn" class="go alt">Choose opponent</button></div>
+    </div>
+
+
+    <div id="settings" class="ov hide">
+      <div class="panel">
+        <h2>Controls &amp; Music</h2>
+        <div class="khead"><span></span><b>Key 1</b><b>Key 2</b><b>Key 3</b></div>
+        <div id="keyTable"></div>
+        <div id="capPad" class="cappad hide">Press a key now, or click this box with a mouse button.<small>Esc cancels. Backspace clears the box.</small></div>
+        <div id="bindMsg" class="bmsg" aria-live="polite"></div>
+        <div class="vols">
+          <label>Music <input id="volMusic" type="range" min="0" max="100" value="80"></label>
+          <label>Effects <input id="volSfx" type="range" min="0" max="100" value="90"></label>
+        </div>
+        <div class="btns"><button id="resetBinds" class="go alt small">Reset to defaults</button><button id="closeSettings" class="go small">Done</button></div>
+      </div>
+    </div>
+
+    <div id="mp" class="ov hide">
+      <div class="panel narrow">
+        <h2>PVP Duel</h2>
+        <p class="mpP">Both fighters play as the Gilded Knight &mdash; the second player's armor is tinted violet. Full moveset: move, jump, attack combo, parry, block, dodge, 3 flasks, Sunray Slash &amp; Cinder Bomb.</p>
+        <div id="mpChoice" class="btns col">
+          <button id="mpHostBtn" class="go">Host a lobby</button>
+          <button id="mpJoinBtn" class="go alt">Join a lobby</button>
+          <button id="mpBack" class="go alt small">Back</button>
+        </div>
+        <div id="mpHostPane" class="hide">
+          <p class="mpP">Share this code with your opponent:</p>
+          <div id="mpCodeBig" class="mpcode"></div>
+          <div class="btns"><button id="mpCancelHost" class="go alt small">Cancel</button></div>
+        </div>
+        <div id="mpJoinPane" class="hide">
+          <p class="mpP">Enter your opponent's code:</p>
+          <input id="mpCodeInput" class="mpinput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDE">
+          <div class="btns"><button id="mpConnectBtn" class="go small">Connect</button><button id="mpCancelJoin" class="go alt small">Cancel</button></div>
+        </div>
+        <p id="mpStatus" class="mpP status"></p>
+      </div>
+    </div>
+
+    <div id="pvpEnd" class="ov hide">
+      <h2 id="pvpEndTitle"></h2>
+      <p id="pvpEndSub"></p>
+      <div class="btns"><button id="pvpRematchBtn" class="go">Rematch</button><button id="pvpMenuBtn" class="go alt">Leave duel</button></div>
+    </div>
+
+    <div id="co" class="ov hide">
+      <div class="panel co-panel">
+        <div class="co-head">
+          <span class="co-crest">&#9876;</span>
+          <div>
+            <h2>Co-op Duel</h2>
+            <p class="mpP co-tag">Two Gilded Knights, one boss. You're gold, your ally is violet &mdash; full solo moveset and health for both.</p>
+          </div>
+        </div>
+        <div id="coBossPick" class="co-cards">
+          <button id="coPickSent" class="co-card active" data-boss="sentinel">
+            <div id="coCSent" class="co-pic"></div>
+            <div class="co-check">&#10003;</div>
+            <div class="co-cn">The Violet Sentinel</div>
+            <div class="co-cs">4000 HP &middot; beam &amp; blast</div>
+          </button>
+          <button id="coPickArt" class="co-card" data-boss="art">
+            <div id="coCArt" class="co-pic art"></div>
+            <div class="co-check">&#10003;</div>
+            <div class="co-cn">Artorias the Abysswalker</div>
+            <div class="co-cs">20000 HP &middot; rage at half health</div>
+          </button>
+        </div>
+        <div id="coChoice" class="btns col">
+          <button id="coHostBtn" class="go">Host a lobby</button>
+          <button id="coJoinBtn" class="go alt">Join a lobby</button>
+          <button id="coBack" class="go alt small">Back to menu</button>
+        </div>
+        <div id="coHostPane" class="hide">
+          <p class="mpP">Fighting <b id="coHostBossName" class="co-accent"></b> &mdash; share this code with your ally:</p>
+          <div id="coCodeBig" class="mpcode"></div>
+          <div class="btns"><button id="coCancelHost" class="go alt small">&larr; Change boss / cancel</button></div>
+        </div>
+        <div id="coJoinPane" class="hide">
+          <p class="mpP">Enter your ally's code:</p>
+          <input id="coCodeInput" class="mpinput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDE">
+          <div class="btns"><button id="coConnectBtn" class="go small">Connect</button><button id="coCancelJoin" class="go alt small">&larr; Back</button></div>
+        </div>
+        <p id="coStatus" class="mpP status"></p>
+      </div>
+    </div>
+
+    <div id="coEnd" class="ov hide">
+      <h2 id="coEndTitle"></h2>
+      <p id="coEndSub"></p>
+      <div class="btns"><button id="coRematchBtn" class="go">Duel again</button><button id="coMenuBtn" class="go alt">Leave</button></div>
+    </div>
+
+    <div id="mpQuit" class="ov hide">
+      <div class="panel narrow">
+        <h2>Leave the duel?</h2>
+        <div class="btns col">
+          <button id="mpQuitStay" class="go">Keep fighting</button>
+          <button id="mpQuitLeave" class="go alt">Leave duel</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="pvpLeaveBtn" class="hide" aria-label="Leave duel">II</button>
+
+    <div id="pause" class="ov hide">
+      <div class="panel narrow">
+        <h2>Paused</h2>
+        <div class="btns col">
+          <button id="resumeBtn" class="go">Resume</button>
+          <button id="pauseSettings" class="go alt">Controls &amp; music</button>
+          <button id="quitBtn" class="go alt">Quit to menu</button>
+        </div>
+      </div>
+    </div>
+    <button id="pauseBtn" class="hide" aria-label="Pause">II</button>
+
+    <div id="touch" class="hide">
+      <button class="tb" id="bl" data-a="left">LEFT</button>
+      <button class="tb" id="bdn" data-a="down">DOWN</button>
+      <button class="tb" id="br" data-a="right">RIGHT</button>
+      <button class="tb big" id="ba" data-a="attack">ATTACK</button>
+      <button class="tb" id="bp" data-a="parry">PARRY</button>
+      <button class="tb" id="bd" data-a="dodge">DODGE</button>
+      <button class="tb" id="bj" data-a="jump">JUMP</button>
+      <button class="tb" id="bh" data-a="heal">FLASK</button>
+      <button class="tb" id="bb" data-a="block">BLOCK</button>
+      <button class="tb sk" id="bs1" data-a="skill1">SLASH</button>
+      <button class="tb sk" id="bs2" data-a="skill2">BOMB</button>
+    </div>
+    <button id="mute" aria-label="Mute sound">🔊</button>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
